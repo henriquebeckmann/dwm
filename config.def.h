@@ -9,7 +9,7 @@ static const char *fonts[]          = { "feather:size=11.5", "monospace:size=10"
 static const char col_bg[]          = "#1e1e1e";
 static const char col_fg[]          = "#d8dee9";
 static const char col_border[]      = "#d4d4d4";
-static const char col_alt_bg[]      = "#3a3a3a";
+static const char col_alt_bg[]      = "#2e2e2e";
 static const char col_alt_fg[]      = "#888888";
 static const char *colors[][3]      = {
 	/*                  fg          bg          border   */
