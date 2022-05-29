@@ -5,23 +5,23 @@ static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "monospace:size=10" };
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#005577";
+static const char *fonts[]          = { "feather:size=11.5", "monospace:size=10" };
+static const char col_bg[]          = "#1e1e1e";
+static const char col_fg[]          = "#d8dee9";
+static const char col_border[]      = "#d4d4d4";
+static const char col_alt_bg[]      = "#3a3a3a";
+static const char col_alt_fg[]      = "#888888";
 static const char *colors[][3]      = {
-	/*                  fg         bg         border   */
-  [SchemeNorm] =    { col_gray3, col_gray1, col_gray2 },
-  [SchemeSel]  =    { col_gray4, col_cyan,  col_cyan  },
-  [SchemeOcc] =     { col_gray4, col_gray1, col_cyan  },
-  [SchemeInfo]  =   { col_gray4, col_cyan,  col_cyan  },
-  [SchemeStatus]  = { col_gray3, col_gray1, col_cyan  },
+	/*                  fg          bg          border   */
+  [SchemeNorm] =    { col_alt_fg, col_bg,     col_bg },
+  [SchemeSel]  =    { col_fg,     col_alt_bg, col_fg },
+  [SchemeOcc] =     { col_fg,     col_bg,     col_bg },
+  [SchemeInfo]  =   { col_fg,     col_bg,     col_bg },
+  [SchemeStatus]  = { col_fg,     col_bg,     col_bg },
 };
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+static const char *tags[] = {"dev",  "www", "sys", "doc", "vbox", "chat", "mus", "vid", "gfx"};
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -46,9 +46,9 @@ static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",      tile },    /* first entry is default */
 	{ "[M]",      monocle },
+	{ "[D]",      deck },
 	{ "|M|",      centeredmaster },
 	{ ">M>",      centeredfloatingmaster },
-	{ "[D]",      deck },
 	{ "|+|",      tatami },
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ NULL,       NULL },
@@ -94,6 +94,7 @@ static Key keys[] = {
   { MODKEY|ShiftMask,             XK_q,      spawn,          SHCMD("kill -9 $(xdotool getwindowpid $(xdotool getwindowfocus))") },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                       XK_r,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY|ShiftMask,             XK_f,      fullscreen,     {0} },
 	{ MODKEY,                       XK_space,  cyclelayout,    {.i = +1 } },
 	{ MODKEY|ShiftMask,	  	        XK_space,  cyclelayout,    {.i = -1 } },
