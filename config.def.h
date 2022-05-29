@@ -28,9 +28,12 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	/* class           instance    title    tags mask   isfloating   monitor    float x,y,w,h */
+  { "scratchpad",    NULL,       NULL,    0,          1,           -1,        90,  87, 1737, 893 },
+  { "Nitrogen",      NULL,       NULL,    0,          1,           -1,        612, 178, 682, 697 },
+  { "qalc",          NULL,       NULL,    0,          1,           -1,        617, 334, 680, 292 },
+  { "Pavucontrol",   NULL,       NULL,    0,          1,           -1,        670, 216, 544, 597 },
+  { "Gucharmap",     NULL,       NULL,    0,          1,           -1,        414, 151, 1111, 801 },
 };
 
 /* layout(s) */
@@ -61,8 +64,8 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-i", "-p", "run:", NULL };
-static const char *termcmd[]  = { "st", NULL };
-static const char *scratchpad[]  = { "st", "-c", "scratchpad", NULL };
+static const char *termcmd[]  = { "kitty", NULL };
+static const char *scratchpad[]  = { "kitty", "--class", "scratchpad", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
