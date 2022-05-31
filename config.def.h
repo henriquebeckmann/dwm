@@ -57,11 +57,11 @@ static const Layout layouts[] = {
 /* key definitions */
 #include <X11/XF86keysym.h>
 #define MODKEY Mod4Mask
-#define TAGKEYS(KEY,TAG) \
-	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
-	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
-	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
+#define TAGKEYS(CHAIN,KEY,TAG) \
+	{ MODKEY,                       CHAIN,    KEY,      view,           {.ui = 1 << TAG} }, \
+	{ MODKEY|ControlMask,           CHAIN,    KEY,      toggleview,     {.ui = 1 << TAG} }, \
+	{ MODKEY|ShiftMask,             CHAIN,    KEY,      tag,            {.ui = 1 << TAG} }, \
+	{ MODKEY|ControlMask|ShiftMask, CHAIN,    KEY,      toggletag,      {.ui = 1 << TAG} },
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
@@ -71,64 +71,68 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-i", "-p", "run:", NULL };
 static const char *termcmd[]  = { "kitty", NULL };
 static const char *scratchpad[]  = { "kitty", "--class", "scratchpad", NULL };
+static const char *calculator[]  = { "kitty", "--class", "qalc", "-e", "qalc", NULL };
 
 static Key keys[] = {
-	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
-	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = scratchpad } },
-	{ MODKEY,                       XK_b,      togglebar,      {0} },
-	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
-	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_j,      movestack,      {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_k,      movestack,      {.i = -1 } },
-	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
-	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
-	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY|ShiftMask,             XK_m,      zoom,           {0} },
-	{ MODKEY,                       XK_Tab,    view,           {0} },
-	{ Mod1Mask,                     XK_Tab,    shiftview,      {.i = +1} },
-	{ Mod1Mask|ShiftMask,           XK_Tab,    shiftview,      {.i = -1} },
-	{ MODKEY,                       XK_q,      killclient,     {0} },
-  { MODKEY|ShiftMask,             XK_q,      spawn,          SHCMD("kill -9 $(xdotool getwindowpid $(xdotool getwindowfocus))") },
-	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_r,      setlayout,      {.v = &layouts[2]} },
-	{ MODKEY|ShiftMask,             XK_f,      fullscreen,     {0} },
-	{ MODKEY,                       XK_space,  cyclelayout,    {.i = +1 } },
-	{ MODKEY|ShiftMask,	  	        XK_space,  cyclelayout,    {.i = -1 } },
-	{ MODKEY,                       XK_f,      togglefloating, {0} },
-	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
-	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
-	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
-	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
-	TAGKEYS(                        XK_1,                      0)
-	TAGKEYS(                        XK_2,                      1)
-	TAGKEYS(                        XK_3,                      2)
-	TAGKEYS(                        XK_4,                      3)
-	TAGKEYS(                        XK_5,                      4)
-	TAGKEYS(                        XK_6,                      5)
-	TAGKEYS(                        XK_7,                      6)
-	TAGKEYS(                        XK_8,                      7)
-	TAGKEYS(                        XK_9,                      8)
-	{ MODKEY|ShiftMask,             XK_r,      quit,           {0} },
-  { MODKEY,                       XK_x,                      spawn,    SHCMD("~/.config/scripts/powermenu.sh") },
-	{ MODKEY,                       XK_minus, scratchpad_show, {0} },
-	{ MODKEY|ShiftMask,             XK_minus, scratchpad_hide, {0} },
-	{ MODKEY,                       XK_equal,scratchpad_remove,{0} },
-  { 0,                            XF86XK_AudioRaiseVolume,   spawn,    SHCMD("pactl set-sink-volume 0 +5%") },
-  { 0,                            XF86XK_AudioLowerVolume,   spawn,    SHCMD("pactl set-sink-volume 0 -5%") },
-  { 0,                            XF86XK_AudioMute,          spawn,    SHCMD("pactl set-sink-mute 0 toggle") },
-  { 0,                            XF86XK_AudioPlay,          spawn,    SHCMD("playerctl play-pause") },
-  { 0,                            XF86XK_AudioStop,          spawn,    SHCMD("playerctl stop") },
-  { 0,                            XF86XK_AudioPrev,          spawn,    SHCMD("playerctl previous") },
-  { 0,                            XF86XK_AudioNext,          spawn,    SHCMD("playerctl next") },
-  { 0,                            XK_Print,                  spawn,    SHCMD("~/.config/scripts/screenshot -f") },
-  { ControlMask,                  XK_Print,                  spawn,    SHCMD("~/.config/scripts/screenshot -w") },
-  { ShiftMask,                    XK_Print,                  spawn,    SHCMD("~/.config/scripts/screenshot -s") },
+	/* modifier                chain key   key        function        argument */
+	{ MODKEY,                  -1,         XK_d,      spawn,          {.v = dmenucmd } },
+	{ MODKEY,                  XK_p,       XK_k,      spawn,          SHCMD("$HOME/.config/scripts/kill-process.sh") },
+	{ MODKEY,                  XK_p,       XK_y,      spawn,          SHCMD("clipmenu") },
+	{ MODKEY,                  XK_p,       XK_c,      spawn,          {.v = calculator } },
+	{ MODKEY,                  -1,         XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY|ShiftMask,        -1,         XK_Return, spawn,          {.v = scratchpad } },
+	{ MODKEY,                  -1,         XK_b,      togglebar,      {0} },
+	{ MODKEY,                  -1,         XK_j,      focusstack,     {.i = +1 } },
+	{ MODKEY,                  -1,         XK_k,      focusstack,     {.i = -1 } },
+	{ MODKEY|ShiftMask,        -1,         XK_j,      movestack,      {.i = +1 } },
+	{ MODKEY|ShiftMask,        -1,         XK_k,      movestack,      {.i = -1 } },
+	{ MODKEY|ControlMask,      -1,         XK_period, incnmaster,     {.i = +1 } },
+	{ MODKEY|ControlMask,      -1,         XK_comma,  incnmaster,     {.i = -1 } },
+	{ MODKEY,                  -1,         XK_h,      setmfact,       {.f = -0.05} },
+	{ MODKEY,                  -1,         XK_l,      setmfact,       {.f = +0.05} },
+	{ MODKEY|ShiftMask,        -1,         XK_m,      zoom,           {0} },
+	{ MODKEY,                  -1,         XK_Tab,    view,           {0} },
+	{ Mod1Mask,                -1,         XK_Tab,    shiftview,      {.i = +1} },
+	{ Mod1Mask|ShiftMask,      -1,         XK_Tab,    shiftview,      {.i = -1} },
+	{ MODKEY,                  -1,         XK_q,      killclient,     {0} },
+  { MODKEY|ShiftMask,        -1,         XK_q,      spawn,          SHCMD("kill -9 $(xdotool getwindowpid $(xdotool getwindowfocus))") },
+	{ MODKEY,                  -1,         XK_t,      setlayout,      {.v = &layouts[0]} },
+	{ MODKEY,                  -1,         XK_m,      setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                  -1,         XK_r,      setlayout,      {.v = &layouts[2]} },
+	{ MODKEY|ShiftMask,        -1,         XK_f,      fullscreen,     {0} },
+	{ MODKEY,                  -1,         XK_space,  cyclelayout,    {.i = +1 } },
+	{ MODKEY|ShiftMask,	  	   -1,         XK_space,  cyclelayout,    {.i = -1 } },
+	{ MODKEY,                  -1,         XK_f,      togglefloating, {0} },
+	{ MODKEY,                  -1,         XK_0,      view,           {.ui = ~0 } },
+	{ MODKEY|ShiftMask,        -1,         XK_0,      tag,            {.ui = ~0 } },
+	{ MODKEY,                  -1,         XK_comma,  focusmon,       {.i = -1 } },
+	{ MODKEY,                  -1,         XK_period, focusmon,       {.i = +1 } },
+	{ MODKEY|ShiftMask,        -1,         XK_comma,  tagmon,         {.i = -1 } },
+	{ MODKEY|ShiftMask,        -1,         XK_period, tagmon,         {.i = +1 } },
+	TAGKEYS(                   -1,         XK_1,                      0)
+	TAGKEYS(                   -1,         XK_2,                      1)
+	TAGKEYS(                   -1,         XK_3,                      2)
+	TAGKEYS(                   -1,         XK_4,                      3)
+	TAGKEYS(                   -1,         XK_5,                      4)
+	TAGKEYS(                   -1,         XK_6,                      5)
+	TAGKEYS(                   -1,         XK_7,                      6)
+	TAGKEYS(                   -1,         XK_8,                      7)
+	TAGKEYS(                   -1,         XK_9,                      8)
+	{ MODKEY|ShiftMask,        -1,         XK_r,      quit,           {0} },
+  { MODKEY,                  -1,         XK_x,                      spawn,    SHCMD("~/.config/scripts/powermenu.sh") },
+	{ MODKEY,                  -1,         XK_minus, scratchpad_show, {0} },
+	{ MODKEY|ShiftMask,        -1,         XK_minus, scratchpad_hide, {0} },
+	{ MODKEY,                  -1,         XK_equal,scratchpad_remove,{0} },
+  { 0,                       -1,         XF86XK_AudioRaiseVolume,   spawn,    SHCMD("pactl set-sink-volume 0 +5%") },
+  { 0,                       -1,         XF86XK_AudioLowerVolume,   spawn,    SHCMD("pactl set-sink-volume 0 -5%") },
+  { 0,                       -1,         XF86XK_AudioMute,          spawn,    SHCMD("pactl set-sink-mute 0 toggle") },
+  { 0,                       -1,         XF86XK_AudioPlay,          spawn,    SHCMD("playerctl play-pause") },
+  { 0,                       -1,         XF86XK_AudioStop,          spawn,    SHCMD("playerctl stop") },
+  { 0,                       -1,         XF86XK_AudioPrev,          spawn,    SHCMD("playerctl previous") },
+  { 0,                       -1,         XF86XK_AudioNext,          spawn,    SHCMD("playerctl next") },
+  { 0,                       -1,         XK_Print,                  spawn,    SHCMD("~/.config/scripts/screenshot -f") },
+  { ControlMask,             -1,         XK_Print,                  spawn,    SHCMD("~/.config/scripts/screenshot -w") },
+  { ShiftMask,               -1,         XK_Print,                  spawn,    SHCMD("~/.config/scripts/screenshot -s") },
 };
 
 /* button definitions */
