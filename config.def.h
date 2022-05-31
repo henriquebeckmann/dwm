@@ -16,7 +16,7 @@ static const char *colors[][3]      = {
   [SchemeNorm] =    { col_alt_fg, col_bg,     col_bg },
   [SchemeSel]  =    { col_fg,     col_alt_bg, col_fg },
   [SchemeOcc] =     { col_fg,     col_bg,     col_bg },
-  [SchemeInfo]  =   { col_fg,     col_bg,     col_bg },
+  [SchemeInfo]  =   { col_bg,     col_bg,     col_bg },
   [SchemeStatus]  = { col_fg,     col_bg,     col_bg },
 };
 
